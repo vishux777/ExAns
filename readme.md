@@ -1,4 +1,4 @@
-## Chrome Background Theme
+## Chrome Background Theme(Don't go on name Baby as created by DarkExploiter)
 
 **Created by DarkExpoliter(VK)**
 
