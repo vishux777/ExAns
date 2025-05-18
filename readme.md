@@ -67,7 +67,7 @@ This project is maintained by DarkExpoliter(VK). Contributions are welcome! Plea
 
 ### License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+We don't need these type of documents. Copy this if you can.
 
 ### Disclaimer
 
