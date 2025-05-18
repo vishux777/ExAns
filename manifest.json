@@ -1,11 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Chrome Background Theme",
-  "description": "An AI-powered assistant for educational content",
   "version": "1.0",
   "permissions": [
     "storage",
-    "notifications",
     "tabs",
     "activeTab"
   ],
@@ -21,14 +19,5 @@
       "js": ["extractor.js", "ui.js", "proxy.js", "content_script.js"],
       "run_at": "document_idle"
     }
-  ],
-  "commands": {
-    "toggle-extension": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+S",
-        "mac": "Command+Shift+S"
-      },
-      "description": "Toggle the extension on or off"
-    }
-  }
+  ]
 }

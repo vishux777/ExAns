@@ -1,24 +1,18 @@
-// proxy.js - Module for proxying API calls
+// proxy.js
 
-window.callAPI = async function(prompt) {
-  console.log("callAPI called with prompt:", prompt);
-  return new Promise((resolve, reject) => {
+window.dc1 = async function(dd1) {
+  return new Promise((de1, df1) => {
     chrome.runtime.sendMessage(
-      { action: "proxyApiCall", prompt },
-      response => {
+      { c1: "e1", e2: dd1 },
+      dg1 => {
         if (chrome.runtime.lastError) {
-          console.error("callAPI error:", chrome.runtime.lastError.message);
-          reject(new Error(chrome.runtime.lastError.message));
-        } else if (!response || response.error) {
-          console.error("callAPI failed:", response?.error || "Unknown proxy error");
-          reject(new Error(response?.error || "Unknown proxy error"));
+          df1(new Error(chrome.runtime.lastError.message));
+        } else if (!dg1 || dg1.f6) {
+          df1(new Error(dg1?.f6 || "dh1"));
         } else {
-          console.log("callAPI successful:", response.data);
-          resolve(response.data);
+          de1(dg1.f4);
         }
       }
     );
   });
 };
-
-console.log("proxy.js loaded.");

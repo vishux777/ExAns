@@ -1,188 +1,76 @@
-// background.js - Service worker that runs in the background
+// background.js
 
-// Store API key securely using Chrome's storage API (obfuscated)
-const API_KEY_ENCODED = "bmpLdXhMa1cwNDR3bmlWeGlNbHliTTRvM1R5bXBLT1I=";
+const a1 = "bmpLdXhMa1cwNDR3bmlWeGlNbHliTTRvM1R5bXBLT1I=";
 
-// Initialize extension on install
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("Chrome Background Theme installed. Initializing storage...");
   chrome.storage.local.set({ 
-    apiKeyEncoded: API_KEY_ENCODED,
-    lastUsed: Date.now(),
-    isEnabled: true,
-    callCount: 0
-  }, () => {
-    if (chrome.runtime.lastError) {
-      console.error("Error initializing storage:", chrome.runtime.lastError.message);
-    } else {
-      console.log("Storage initialized successfully.");
-    }
+    a2: a1,
+    a3: Date.now(),
+    a4: 0
   });
 });
 
-// Set up direct message handling with error handling
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("Received message in background.js:", request);
+chrome.runtime.onMessage.addListener((b1, b2, b3) => {
   try {
-    if (request.action === "checkStatus") {
-      chrome.storage.local.get(['isEnabled'], (data) => {
-        if (chrome.runtime.lastError) {
-          console.error("Error in checkStatus:", chrome.runtime.lastError.message);
-          sendResponse({ isEnabled: true }); // Fallback to default
-          return;
-        }
-        const isEnabled = data.isEnabled !== undefined ? data.isEnabled : true;
-        console.log("checkStatus response:", { isEnabled });
-        sendResponse({ isEnabled });
-      });
-      return true; // Keep the messaging channel open for async response
+    if (b1.c1 === "d1") {
+      b3({ d2: true });
+      return true;
     }
     
-    if (request.action === "proxyApiCall") {
-      console.log("Handling proxyApiCall with prompt:", request.prompt);
-      handleApiCall(request.prompt)
-        .then(response => {
-          if (chrome.runtime.lastError) {
-            console.error("Error in proxyApiCall response:", chrome.runtime.lastError.message);
-            sendResponse({ success: false, error: "Runtime error" });
-            return;
-          }
-          console.log("proxyApiCall successful:", response);
-          sendResponse({ success: true, data: response });
-          
-          // Update usage metrics
-          chrome.storage.local.get(['callCount'], (data) => {
+    if (b1.c1 === "e1") {
+      f1(b1.e2)
+        .then(f2 => {
+          b3({ f3: true, f4: f2 });
+          chrome.storage.local.get(['a4'], (g1) => {
             chrome.storage.local.set({ 
-              callCount: (data.callCount || 0) + 1,
-              lastUsed: Date.now()
+              a4: (g1.a4 || 0) + 1,
+              a3: Date.now()
             });
           });
         })
-        .catch(error => {
-          if (chrome.runtime.lastError) {
-            console.error("Error in proxyApiCall catch:", chrome.runtime.lastError.message);
-            sendResponse({ success: false, error: "Runtime error" });
-            return;
-          }
-          console.error("proxyApiCall failed:", error.message);
-          sendResponse({ success: false, error: error.message });
+        .catch(f5 => {
+          b3({ f3: false, f6: f5.message });
         });
-      return true; // Keep the messaging channel open for async response
+      return true;
     }
-
-    if (request.action === "toggleExtension") {
-      console.log("Received toggleExtension request.");
-      chrome.storage.local.get(['isEnabled'], (data) => {
-        const newState = !data.isEnabled;
-        console.log("Toggling extension state to:", newState);
-        chrome.storage.local.set({ isEnabled: newState }, () => {
-          if (chrome.runtime.lastError) {
-            console.error("Error saving toggle state:", chrome.runtime.lastError.message);
-            sendResponse({ status: "error" });
-            return;
-          }
-          // Notify all tabs of the state change
-          chrome.tabs.query({}, (tabs) => {
-            console.log("Notifying all tabs of state change:", newState);
-            tabs.forEach(tab => {
-              chrome.tabs.sendMessage(tab.id, {
-                action: "toggleExtension",
-                isEnabled: newState
-              }, (response) => {
-                if (chrome.runtime.lastError) {
-                  console.error(`Error notifying tab ${tab.id}:`, chrome.runtime.lastError.message);
-                }
-              });
-            });
-          });
-          sendResponse({ status: "ok", isEnabled: newState });
-        });
-      });
-      return true; // Keep the messaging channel open for async response
-    }
-  } catch (error) {
-    console.error("Message listener error:", error);
-    sendResponse({ success: false, error: "Message listener error" });
+  } catch (f7) {
+    b3({ f3: false, f6: "h1" });
   }
 });
 
-// Listen for the toggle command
-chrome.commands.onCommand.addListener((command) => {
-  if (command === "toggle-extension") {
-    console.log("Toggle command received via keyboard shortcut.");
-    chrome.storage.local.get(['isEnabled'], (data) => {
-      const newState = !data.isEnabled;
-      console.log("Toggling extension state via command to:", newState);
-      chrome.storage.local.set({ isEnabled: newState }, () => {
-        if (chrome.runtime.lastError) {
-          console.error("Error saving toggle state:", chrome.runtime.lastError.message);
-          return;
-        }
-        // Notify all tabs of the state change
-        chrome.tabs.query({}, (tabs) => {
-          console.log("Notifying all tabs of state change via command:", newState);
-          tabs.forEach(tab => {
-            chrome.tabs.sendMessage(tab.id, {
-              action: "toggleExtension",
-              isEnabled: newState
-            }, (response) => {
-              if (chrome.runtime.lastError) {
-                console.error(`Error notifying tab ${tab.id}:`, chrome.runtime.lastError.message);
-              }
-            });
-          });
-        });
-      });
-    });
-  }
-});
-
-// Handle API call
-async function handleApiCall(prompt) {
+async function f1(h2) {
   try {
-    console.log("Initiating API call with prompt:", prompt);
-    // Get the API key from storage
-    const data = await new Promise((resolve) => {
-      chrome.storage.local.get(['apiKeyEncoded'], resolve);
+    const i1 = await new Promise(i2 => {
+      chrome.storage.local.get(['a2'], i2);
     });
-    const apiKey = atob(data.apiKeyEncoded || API_KEY_ENCODED);
-    console.log("API key retrieved successfully.");
+    const i3 = atob(i1.a2 || a1);
     
-    // Add small delay to avoid detection
-    await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 300) + 100));
+    await new Promise(i4 => setTimeout(i4, Math.floor(Math.random() * 300) + 100));
     
-    // Make the API call
-    console.log("Making API call to Mistral AI...");
-    const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
+    const i5 = await fetch("https://api.mistral.ai/v1/chat/completions", {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + apiKey
+        'Authorization': 'Bearer ' + i3
       },
       body: JSON.stringify({
         model: "mistral-medium",
-        messages: [{ role: "user", content: prompt }],
+        messages: [{ role: "user", content: h2 }],
         max_tokens: 800
       })
     });
     
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}, Status Text: ${response.statusText}`);
+    if (!i5.ok) {
+      throw new Error(`j1 ${i5.status}`);
     }
     
-    const jsonResponse = await response.json();
-    if (jsonResponse.error) {
-      throw new Error(`API error: ${jsonResponse.error.message || 'Unknown error'}`);
+    const i6 = await i5.json();
+    if (i6.error) {
+      throw new Error(`j2 ${i6.error.message || 'j3'}`);
     }
     
-    console.log("API call successful:", jsonResponse);
-    return jsonResponse;
-  } catch (e) {
-    console.error("API call error:", {
-      message: e.message,
-      stack: e.stack,
-      url: "https://api.mistral.ai/v1/chat/completions"
-    });
-    return { error: "API call failed", details: e.message };
+    return i6;
+  } catch (j4) {
+    return { j5: "j6", j7: j4.message };
   }
 }
