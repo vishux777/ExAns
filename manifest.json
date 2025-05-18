@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Study Assistant",
+  "description": "An AI-powered study assistant for educational content",
+  "version": "1.0",
+  "permissions": [
+    "storage",
+    "notifications",
+    "contextMenus",
+    "clipboardRead"
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "action": {
+    "default_icon": {
+      "16": "icon-16.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content_script.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["proxy.js", "extractor.js", "ui.js"],
+      "matches": ["*://*/*"]
+    }
+  ],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  }
+}
