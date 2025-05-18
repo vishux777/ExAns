@@ -18,7 +18,7 @@
   "content_scripts": [
     {
       "matches": ["*://*/*"],
-      "js": ["content_script.js"],
+      "js": ["extractor.js", "ui.js", "proxy.js", "content_script.js"],
       "run_at": "document_idle"
     }
   ],

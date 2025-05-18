@@ -1,7 +1,7 @@
 // extractor.js - Module for extracting content from web pages
 
-// Extract content from the page while minimizing DOM operations
-export function extractContent() {
+window.extractContent = function() {
+  console.log("extractContent called.");
   let question = '';
   const options = [];
   const visitedElements = new Set(); // Avoid duplicates
@@ -9,6 +9,7 @@ export function extractContent() {
   try {
     // Use different extraction methods to avoid detection patterns
     const method = Math.floor(Math.random() * 3);
+    console.log("Using extraction method:", method);
     
     switch(method) {
       case 0:
@@ -273,9 +274,23 @@ export function extractContent() {
     
     return label ? label.trim() : '';
   }
-}
+};
 
-// Export any other utility functions for content extraction
-export function getSelectedText() {
-  return window.getSelection().toString().trim();
-}
+window.getSelectedText = function() {
+  console.log("getSelectedText called.");
+  try {
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const selectedText = selection.toString().trim();
+      if (selectedText.length > 0) {
+        return selectedText;
+      }
+    }
+    return '';
+  } catch (error) {
+    console.error("Error getting selected text:", error);
+    return '';
+  }
+};
+
+console.log("extractor.js loaded.");
