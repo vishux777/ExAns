@@ -1,74 +1,168 @@
-## Chrome Background Theme(Don't go on name Baby as created by DarkExploiter)
+# Chrome Background Theme(Don't go on name)
 
-**Created by DarkExpoliter(VK)**
+**Made by DarkExpoliter(VK)**
 
-### Overview
+A Chrome extension for discreetly extracting and displaying webpage content with minimal interaction.
 
-Chrome Background Theme is a Chrome extension designed to assist users by extracting content from webpages and providing concise information in a discreet manner. The extension is built with a focus on minimal interaction and privacy, making it suitable for quick lookups during browsing.
+---
 
-**Note:** This extension is intended for educational purposes and should be used in compliance with all applicable rules and policies, including those of any testing or proctoring platforms.
+## 📋 Overview
 
-### Features
+Chrome Background Theme is a Chrome extension that extracts content from webpages and provides concise information in a small, temporary window. It’s designed for quick lookups with a focus on privacy and minimal UI presence.
 
-* **Quick Content Extraction:** Double-click on a webpage to extract content and display relevant information.
-* **Discreet Display:** Information is shown in a small window in the bottom-right corner for 2 seconds.
-* **Privacy-Focused:** Minimal interaction with the webpage and no persistent UI elements.
+> **⚠️ Note**: This extension is for educational purposes only. Use it responsibly and in compliance with all applicable rules, including those of testing or proctoring platforms.
 
-### Installation
+---
 
-#### Chrome/Edge Installation
+## 🚀 Features
 
-1.  Clone or download this repository to your computer.
-2.  Extract the files to a folder.
-3.  Open Chrome or Edge and navigate to `chrome://extensions` or `edge://extensions`.
-4.  Enable "Developer mode" using the toggle in the top right corner.
-5.  Click "Load unpacked" and select the folder containing the extension files.
-6.  The Chrome Background Theme extension should now be installed.
+- **Quick Extraction**: Double-click to extract content from any webpage.
+- **Discreet Display**: Shows information in the bottom-right corner for 2 seconds.
+- **Privacy-Focused**: Minimal webpage interaction, no persistent UI.
 
-#### Firefox Installation (Temporary)
+---
 
-1.  Clone or download this repository to your computer.
-2.  Extract the files to a folder.
-3.  Open Firefox and navigate to `about:debugging`.
-4.  Click "This Firefox" in the left sidebar.
-5.  Click "Load Temporary Add-on" and select the `manifest.json` file in the extension folder.
-6.  The Chrome Background Theme extension should now be installed temporarily (until Firefox restarts).
+## 🛠️ Installation
 
-### Usage
+### Chrome/Edge
+1. Clone or download the repository:
+   ```
+   git clone https://github.com/<your-username>/chrome-background-theme.git
+   ```
+2. Navigate to the extensions page:
+   ```
+   chrome://extensions
+   ```
+3. Enable Developer Mode:
+   - Toggle the "Developer mode" switch in the top-right corner.
+4. Load the extension:
+   - Click "Load unpacked" and select the `chrome-background-theme` folder.
 
-1.  Navigate to a webpage with content you want to analyze.
-2.  Double-click anywhere on the page with the left mouse button.
-3.  A small window will appear in the bottom-right corner of the page for 2 seconds, displaying the extracted information.
+### Firefox (Temporary)
+1. Clone or download the repository:
+   ```
+   git clone https://github.com/<your-username>/chrome-background-theme.git
+   ```
+2. Open Firefox debugging:
+   ```
+   about:debugging
+   ```
+3. Load the add-on:
+   - Click "This Firefox" → "Load Temporary Add-on".
+   - Select `manifest.json` from the `chrome-background-theme` folder.
 
-### File Structure
+---
 
+## 📖 Usage
 
+1. Open a webpage:
+   ```
+   https://example.com
+   ```
+2. Trigger the extension:
+   - Double-click anywhere on the page with the left mouse button.
+3. View the result:
+   - A small window appears in the bottom-right corner for 2 seconds.
+
+---
+
+## 🔑 Replacing the API Key
+
+The extension uses the Mistral AI API. Replace the default API key with your own:
+
+1. **Get a Mistral AI API Key**:
+   - Visit [Mistral AI](https://mistral.ai) and sign up/log in.
+   - Generate an API key from your dashboard.
+
+2. **Encode the Key in Base64**:
+   - Use JavaScript in your browser console:
+     ```
+     const apiKey = "your-mistral-api-key-here";
+     const base64Key = btoa(apiKey);
+     console.log(base64Key);
+     ```
+   - Or use an online tool: [Base64 Encode](https://www.base64encode.org/).
+
+3. **Update `background.js`**:
+   - Open `background.js` in a text editor.
+   - Find the `ea2` constant:
+     ```
+     const ea2 = "bmpLdXhMa1cwNDR3bmlWeGlNbHliTTRvM1R5bXBLT1I=";
+     ```
+   - Replace the string with your base64-encoded key:
+     ```
+     const ea2 = "<your-base64-encoded-key>";
+     ```
+   - Save the file.
+
+4. **Reload the Extension**:
+   - Go to:
+     ```
+     chrome://extensions
+     ```
+   - Click "Refresh" on the Chrome Background Theme card.
+
+> **🔒 Security Note**: Keep your API key confidential. Do not commit it to version control in plain text.
+
+---
+
+## 📁 File Structure
+
+```
 extension/
-├── manifest.json       # Extension configuration
-├── background.js       # Background service worker
-├── content_script.js   # Content script injected into pages
-├── proxy.js            # Proxy module for API calls
-├── extractor.js        # DOM content extraction utilities
-├── ui.js               # UI rendering utilities
-├── installation_guide.md # Installation and usage instructions
-├── extension_structure.md # Overview of the file structure
-├── README.md           # This file
+├── manifest.json          # Extension configuration
+├── background.js          # Service worker (contains API key)
+├── content_script.js      # Injected content script
+├── proxy.js               # API call proxy
+├── extractor.js           # DOM extraction utilities
+├── ui.js                  # UI rendering utilities
+├── installation_guide.md  # Installation instructions
+├── extension_structure.md # File structure overview
+├── README.md              # This file
+```
 
+---
 
-### Troubleshooting
+## 🐞 Troubleshooting
 
-* **Extension Not Responding:** Ensure the webpage has fully loaded before double-clicking. Try refreshing the page.
-* **Content Not Displaying:** Some websites with strict Content Security Policies (CSP) may interfere with the extension. Test on a different webpage (e.g., a Wikipedia article) to confirm functionality.
-* **Partial Content Display:** If the displayed content is cut off, the response might be too long for the current display window. This is a known limitation.
+- **Extension Not Responding**:
+  - Ensure the page is fully loaded.
+  - Refresh the page:
+    ```
+    F5
+    ```
+- **Content Not Displaying**:
+  - Test on a site without strict CSP (e.g., Wikipedia).
+  - Open:
+    ```
+    https://wikipedia.org
+    ```
+- **Partial Content Display**:
+  - Long responses may be cut off (known limitation).
+- **API Key Errors**:
+  - Verify your API key in `background.js`.
+  - Check Mistral AI API docs for limits.
 
-### Contributing
+---
 
-This project is maintained by DarkExpoliter(VK). Contributions are welcome! Please fork the repository, make your changes, and submit a pull request.
+## 🤝 Contributing
 
-### License
+Maintained by DarkExpoliter(VK). Contributions are welcome!
 
-We don't need these type of documents. Copy this if you can.
+1. Fork the repository:
+   ```
+   https://github.com/<your-username>/chrome-background-theme/fork
+   ```
+2. Make changes and submit a pull request.
 
-### Disclaimer
+---
+
+## 📜 License
+
+Still working on it.
+
+---
+
+## ⚖️ Disclaimer
 
 Use this extension responsibly and in accordance with all applicable laws and regulations. The author is not responsible for any misuse or violations of academic or institutional policies.
