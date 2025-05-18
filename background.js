@@ -11,84 +11,127 @@ chrome.runtime.onInstalled.addListener(() => {
     apiKeyEncoded: API_KEY_ENCODED,
     lastUsed: Date.now(),
     isEnabled: true,
-    callCount: 0,
-    triggerMethod: "gesture" // options: "gesture", "clipboard", "context"
-  });
-  
-  // Create context menu item
-  chrome.contextMenus.create({
-    id: "analyzeSelection",
-    title: "Analyze Selection",
-    contexts: ["selection"]
+    callCount: 0
   });
 });
 
-// Listen for context menu clicks
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "analyzeSelection" && info.selectionText) {
-    // Send the selected text to the content script
-    chrome.tabs.sendMessage(tab.id, {
-      action: "processSelection",
-      selection: info.selectionText
-    });
-  }
-});
-
-// Set up different communication channels to avoid detection
-// 1. Direct message handling
+// Set up direct message handling with error handling
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "checkStatus") {
-    chrome.storage.local.get(['isEnabled', 'triggerMethod'], (data) => {
-      sendResponse({ 
-        isEnabled: data.isEnabled || true,
-        triggerMethod: data.triggerMethod || "gesture" 
+  try {
+    if (request.action === "checkStatus") {
+      chrome.storage.local.get(['isEnabled'], (data) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error in checkStatus:", chrome.runtime.lastError.message);
+          return;
+        }
+        sendResponse({ 
+          isEnabled: data.isEnabled || true
+        });
       });
-    });
-    return true; // Keep the messaging channel open for async response
+      return true; // Keep the messaging channel open for async response
+    }
+    
+    // Handle API proxy request
+    if (request.action === "proxyApiCall") {
+      handleApiCall(request.prompt)
+        .then(response => {
+          if (chrome.runtime.lastError) {
+            console.error("Error in proxyApiCall response:", chrome.runtime.lastError.message);
+            return;
+          }
+          sendResponse({ success: true, data: response });
+          
+          // Update usage metrics
+          chrome.storage.local.get(['callCount'], (data) => {
+            chrome.storage.local.set({ 
+              callCount: (data.callCount || 0) + 1,
+              lastUsed: Date.now()
+            });
+          });
+        })
+        .catch(error => {
+          if (chrome.runtime.lastError) {
+            console.error("Error in proxyApiCall catch:", chrome.runtime.lastError.message);
+            return;
+          }
+          sendResponse({ success: false, error: error.message });
+        });
+      return true; // Keep the messaging channel open for async response
+    }
+
+    // Handle toggle request from content script
+    if (request.action === "toggleExtension") {
+      chrome.storage.local.get(['isEnabled'], (data) => {
+        const newState = !(data.isEnabled);
+        chrome.storage.local.set({ isEnabled: newState }, () => {
+          if (chrome.runtime.lastError) {
+            console.error("Error saving toggle state:", chrome.runtime.lastError.message);
+            sendResponse({ status: "error" });
+            return;
+          }
+          // Notify all tabs of the state change
+          chrome.tabs.query({}, (tabs) => {
+            tabs.forEach(tab => {
+              chrome.tabs.sendMessage(tab.id, {
+                action: "toggleExtension",
+                isEnabled: newState
+              }, (response) => {
+                if (chrome.runtime.lastError) {
+                  console.error(`Error notifying tab ${tab.id}:`, chrome.runtime.lastError.message);
+                }
+              });
+            });
+          });
+          sendResponse({ status: "ok", isEnabled: newState });
+        });
+      });
+      return true; // Keep the messaging channel open for async response
+    }
+  } catch (error) {
+    console.error("Message listener error:", error);
   }
-  
-  // Handle API proxy request
-  if (request.action === "proxyApiCall") {
-    handleApiCall(request.prompt)
-      .then(response => {
-        sendResponse({ success: true, data: response });
-        
-        // Update usage metrics
-        chrome.storage.local.get(['callCount'], (data) => {
-          chrome.storage.local.set({ 
-            callCount: (data.callCount || 0) + 1,
-            lastUsed: Date.now()
+});
+
+// Listen for the toggle command
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "toggle-extension") {
+    chrome.storage.local.get(['isEnabled'], (data) => {
+      const newState = !(data.isEnabled);
+      chrome.storage.local.set({ isEnabled: newState }, () => {
+        if (chrome.runtime.lastError) {
+          console.error("Error saving toggle state:", chrome.runtime.lastError.message);
+          return;
+        }
+        // Notify all tabs of the state change
+        chrome.tabs.query({}, (tabs) => {
+          tabs.forEach(tab => {
+            chrome.tabs.sendMessage(tab.id, {
+              action: "toggleExtension",
+              isEnabled: newState
+            }, (response) => {
+              if (chrome.runtime.lastError) {
+                console.error(`Error notifying tab ${tab.id}:`, chrome.runtime.lastError.message);
+              }
+            });
           });
         });
-      })
-      .catch(error => {
-        sendResponse({ success: false, error: error.message });
       });
-    return true; // Keep the messaging channel open for async response
+    });
   }
 });
 
-// 2. Handle API call - implementation varies to avoid detection patterns
+// Handle API call
 async function handleApiCall(prompt) {
   try {
     // Get the API key from storage
     const data = await chrome.storage.local.get(['apiKeyEncoded']);
     const apiKey = atob(data.apiKeyEncoded || API_KEY_ENCODED);
     
-    // Randomize endpoint selection to avoid pattern detection
-    // This could be expanded to use different proxy mechanisms
-    const endpoints = [
-      "https://api.mistral.ai/v1/chat/completions",
-      // Additional proxies could be added here
-    ];
-    
-    const selectedEndpoint = endpoints[Math.floor(Math.random() * endpoints.length)];
-    
-    // Add jitter to the timing to avoid detection
-    await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 800) + 200));
+    // Add small delay to avoid detection
+    await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 300) + 100));
     
     // Make the API call
-    const response = await fetch(selectedEndpoint, {
+    const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -107,27 +150,3 @@ async function handleApiCall(prompt) {
     return { error: "API call failed", details: e.message };
   }
 }
-
-// Listen for browser action clicks
-chrome.action.onClicked.addListener((tab) => {
-  chrome.storage.local.get(['isEnabled'], (data) => {
-    const newState = !(data.isEnabled);
-    chrome.storage.local.set({ isEnabled: newState });
-    
-    // Update the icon to reflect the enabled/disabled state
-    const iconState = newState ? "" : "-disabled";
-    chrome.action.setIcon({
-      path: {
-        16: `icon-16${iconState}.png`,
-        48: `icon-48${iconState}.png`,
-        128: `icon-128${iconState}.png`
-      }
-    });
-    
-    // Notify the content script of the state change
-    chrome.tabs.sendMessage(tab.id, {
-      action: "toggleExtension",
-      isEnabled: newState
-    });
-  });
-});

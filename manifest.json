@@ -1,24 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "Study Assistant",
-  "description": "An AI-powered study assistant for educational content",
+  "name": "Chrome Background Theme",
+  "description": "An AI-powered assistant for educational content",
   "version": "1.0",
   "permissions": [
     "storage",
     "notifications",
-    "contextMenus",
-    "clipboardRead"
+    "tabs",
+    "activeTab"
   ],
   "host_permissions": [
     "*://*/*"
   ],
-  "action": {
-    "default_icon": {
-      "16": "icon-16.png",
-      "48": "icon-48.png",
-      "128": "icon-128.png"
-    }
-  },
   "background": {
     "service_worker": "background.js"
   },
@@ -29,15 +22,13 @@
       "run_at": "document_idle"
     }
   ],
-  "web_accessible_resources": [
-    {
-      "resources": ["proxy.js", "extractor.js", "ui.js"],
-      "matches": ["*://*/*"]
+  "commands": {
+    "toggle-extension": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Toggle the extension on or off"
     }
-  ],
-  "icons": {
-    "16": "icon-16.png",
-    "48": "icon-48.png",
-    "128": "icon-128.png"
   }
 }

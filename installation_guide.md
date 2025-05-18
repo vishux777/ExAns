@@ -7,38 +7,23 @@
 2. Open Chrome or Edge and navigate to `chrome://extensions` or `edge://extensions`.
 3. Enable "Developer mode" using the toggle in the top right corner.
 4. Click "Load unpacked" and select the folder containing the extension files.
-5. The Study Assistant extension should now appear in your browser toolbar.
+5. The Chrome Background Theme extension should now be installed.
 
 ### Firefox Installation
 1. Download and extract the extension files to a folder on your computer.
 2. Open Firefox and navigate to `about:debugging`.
 3. Click "This Firefox" in the left sidebar.
 4. Click "Load Temporary Add-on" and select the `manifest.json` file in the extension folder.
-5. The Study Assistant extension should now appear in your browser toolbar.
+5. The Chrome Background Theme extension should now be installed.
 
 ## Using the Extension
 
-The extension offers multiple ways to interact with it, all designed to be discreet:
+The extension offers a discreet way to interact with it:
 
-### Method 1: Gesture Recognition
+### Method: Double-Click Trigger
 1. Navigate to a page with a question or problem.
-2. Press and hold the middle mouse button (scroll wheel).
-3. While holding, draw a "Z" shape with your mouse.
-4. Release the middle mouse button.
-5. The extension will analyze the page content and display the answer.
-
-### Method 2: Clipboard Trigger
-1. Navigate to a page with a question or problem.
-2. Copy any text that includes the phrase "?analyze" (e.g., copy "What's the answer?analyze").
-3. Paste this text anywhere on the page.
-4. The extension will analyze the page content and display the answer.
-
-### Method 3: Context Menu
-1. Navigate to a page with a question or problem.
-2. Select (highlight) the text of the question.
-3. Right-click on the selected text.
-4. Choose "Analyze Selection" from the context menu.
-5. The extension will analyze the selected text and display insights.
+2. Double-click anywhere on the page with the left mouse button.
+3. The extension will analyze the page content and display the answer.
 
 ## Answer Display Methods
 
@@ -52,12 +37,11 @@ The extension uses various discreet methods to show answers:
 
 The display method is randomly selected each time to avoid detection patterns.
 
-## Disabling the Extension
+## Toggling the Extension
 
-To temporarily disable the extension:
-1. Click the extension icon in the browser toolbar.
-2. The icon will change to indicate the disabled state.
-3. Click again to re-enable.
+To toggle the extension on or off:
+1. Press `Ctrl+Shift+S` (or `Command+Shift+S` on Mac) while on any webpage.
+2. A notification will confirm whether the extension is enabled or disabled.
 
 ## Troubleshooting
 
