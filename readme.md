@@ -159,7 +159,7 @@ Maintained by DarkExpoliter(VK). Contributions are welcome!
 
 ## 📜 License
 
-Still working on it.
+Check license page before usage.
 
 ---
 
