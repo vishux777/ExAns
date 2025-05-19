@@ -1,6 +1,6 @@
 # Chrome Background Theme(Don't go on name)
 
-**Made by DarkExpoliter(VK)**
+**Made by DarkExpoliter(VK). Have a look at license before use.**
 
 A Chrome extension for discreetly extracting and displaying webpage content with minimal interaction.
 
